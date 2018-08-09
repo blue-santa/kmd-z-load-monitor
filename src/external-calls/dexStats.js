@@ -7,14 +7,14 @@ const base = 'https://dexstats.info/';
 const catchMeIfYouCanSong = '/../assets/audio/catch-me-if-you-can-title.mp3';
 const catchMeIfYouCan = 'http://localhost:3001';
 
-let minionsMoving = {
+let currentStats = {
   before: '',
   after: '',
-  minions: 0,
-  moonlightTotal: 0,
-  moonlightPretty: 0,
-  engineShutDown: Date.now(),
-  lastGlimpse: ''
+  coinsMoved: 0,
+  timeTotal: 0,
+  timePretty: 0,
+  periodStart: Date.now(),
+  lastMovement: ''
 };
 
 const trimFront = (docBody, frontBreak) => {
@@ -86,38 +86,38 @@ const snap = () => {
 const captainsLog = () => {
   process.stdout.write('\033c');
   console.log(`...shhh. stay down...`);
-  if (minionsMoving.minions) {
-    console.log(`...minions moved: ${minionsMoving.minions}`);
+  if (currentStats.coinsMoved) {
+    console.log(`...coinsMoved moved: ${currentStats.coinsMoved}`);
   }
-  if (minionsMoving.lastGlimpse) {
-    console.log(`...last glimpse: ${minionsMoving.lastGlimpse}`);
+  if (currentStats.lastMovement) {
+    console.log(`...last glimpse: ${currentStats.lastMovement}`);
   }
-  console.log(`...moonlight traveled: ${minionsMoving.moonlightPretty}`);
+  console.log(`...moonlight traveled: ${currentStats.timePretty}`);
 }
 
 const captureMoonlight = (moonlightCaptured) => {
-  minionsMoving.moonlightTotal = moonlightCaptured;
-  minionsMoving.moonlightPretty = (moonlightCaptured/1000/360/60).toFixed(4);
+  currentStats.timeTotal = moonlightCaptured;
+  currentStats.timePretty = (moonlightCaptured/1000/360/60).toFixed(4);
 }
 
 function isDifferent() {
   process.stdout.write('\033c');
   console.log(`...peeping...`);
   checkExplorer((dexBody) => {
-    minionsMoving.after = dexBody;
-    if (Math.abs(minionsMoving.before - minionsMoving.after) < 10) {
-      captureMoonlight(Date.now() - minionsMoving.engineShutDown);
+    currentStats.after = dexBody;
+    if (Math.abs(currentStats.before - currentStats.after) < 10) {
+      captureMoonlight(Date.now() - currentStats.periodStart);
       captainsLog();
       return;
-    } else if (Math.abs(minionsMoving.before - minionsMoving.after) > 10 && minionsMoving.minions < 200) {
-      minionsMoving.minions = Math.abs(minionsMoving.before - minionsMoving.after);
-      minionsMoving.lastGlimpse = new Date();
-      captureMoonlight(Date.now() - minionsMoving.engineShutDown);
+    } else if (Math.abs(currentStats.before - currentStats.after) > 10 && currentStats.coinsMoved < 200) {
+      currentStats.coinsMoved = Math.abs(currentStats.before - currentStats.after);
+      currentStats.lastMovement = new Date();
+      captureMoonlight(Date.now() - currentStats.periodStart);
       captainsLog();
       return;
-    } else if (Math.abs(minionsMoving.before - minionsMoving.after) > 10 && minionsMoving.minions >= 200) {
+    } else if (Math.abs(currentStats.before - currentStats.after) > 10 && currentStats.coinsMoved >= 200) {
       snap();
-      return; 
+      return;
     }
   });
 };
@@ -126,7 +126,7 @@ const stakeout = () => {
   process.stdout.write('\033c');
   console.log(`...turning off the engine...`);
   checkExplorer((dexBody) => {
-    minionsMoving.before = dexBody;
+    currentStats.before = dexBody;
     captainsLog();
     setInterval(isDifferent, 300000);
   });
