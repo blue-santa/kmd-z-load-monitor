@@ -1,0 +1,23 @@
+{
+  "name": "fin-scripts",
+  "version": "0.0.1",
+  "description": "Public fintech trading scripts",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/siddhartha-crypto/fin-scripts.git"
+  },
+  "author": "siddhartha-crypto",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://gitlab.com/siddhartha-crypto/fin-scripts/issues"
+  },
+  "homepage": "https://gitlab.com/siddhartha-crypto/fin-scripts#README",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3"
+  }
+}
