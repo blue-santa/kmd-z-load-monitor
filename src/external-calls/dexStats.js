@@ -87,17 +87,17 @@ const captainsLog = () => {
   process.stdout.write('\033c');
   console.log(`...shhh. stay down...`);
   if (currentStats.coinsMoved) {
-    console.log(`...coinsMoved moved: ${currentStats.coinsMoved}`);
+    console.log(`...z-coins spotted: ${currentStats.coinsMoved}...`);
   }
   if (currentStats.lastMovement) {
-    console.log(`...last glimpse: ${currentStats.lastMovement}`);
+    console.log(`...last glimpse of activity: ${currentStats.lastMovement}...`);
   }
-  console.log(`...moonlight traveled: ${currentStats.timePretty}`);
+  console.log(`...hours passed: ${currentStats.timePretty}...`);
 }
 
-const captureMoonlight = (moonlightCaptured) => {
-  currentStats.timeTotal = moonlightCaptured;
-  currentStats.timePretty = (moonlightCaptured/1000/360/60).toFixed(4);
+const checkHours = (timePassed) => {
+  currentStats.timeTotal = timePassed;
+  currentStats.timePretty = (timePassed/1000/3600).toFixed(4);
 }
 
 function isDifferent() {
@@ -106,13 +106,13 @@ function isDifferent() {
   checkExplorer((dexBody) => {
     currentStats.after = dexBody;
     if (Math.abs(currentStats.before - currentStats.after) < 10) {
-      captureMoonlight(Date.now() - currentStats.periodStart);
+      checkHours(Date.now() - currentStats.periodStart);
       captainsLog();
       return;
     } else if (Math.abs(currentStats.before - currentStats.after) > 10 && currentStats.coinsMoved < 200) {
       currentStats.coinsMoved = Math.abs(currentStats.before - currentStats.after);
       currentStats.lastMovement = new Date();
-      captureMoonlight(Date.now() - currentStats.periodStart);
+      checkHours(Date.now() - currentStats.periodStart);
       captainsLog();
       return;
     } else if (Math.abs(currentStats.before - currentStats.after) > 10 && currentStats.coinsMoved >= 200) {
