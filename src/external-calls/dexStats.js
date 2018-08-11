@@ -48,9 +48,20 @@ const makeInt = (docBody) => {
 
 const checkExplorer = (callback) => {
   request.get(base + 'explorers.php', (err, res, body) => {
-    let dexBody = body;
     let findKMD = 'KMD_snapshot.json';
     let findPrivacyRow = 'badge-dark">';
+    if (res === undefined) {
+      console.log(`\n\n...the view is blocked...`);
+    }
+    if (res.statusCode !== 200) {
+      console.log(`...the status code is: ${res.statusCode}`);
+      return;
+    }
+    if (body.includes(findKMD) === false || body.includes(findPrivacyRow) === false) {
+      console.log(`...the markers are missing. need to get out and check where they went...`);
+      return;
+    }
+    let dexBody = body;
     let findElementClosure = '</';
     dexBody = trimFront(dexBody, findKMD);
     dexBody = trimFront(dexBody, findPrivacyRow);
