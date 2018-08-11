@@ -51,7 +51,7 @@ const checkExplorer = (callback) => {
     let findKMD = 'KMD_snapshot.json';
     let findPrivacyRow = 'badge-dark">';
     if (res === undefined) {
-      console.log(`\n\n...the view is blocked...`);
+      return console.log(`\n\n...the view is blocked...`);
     }
     if (res.statusCode !== 200) {
       console.log(`...the status code is: ${res.statusCode}`);
