@@ -8,9 +8,11 @@ const catchMeIfYouCanSong = '/../assets/audio/catch-me-if-you-can-title.mp3';
 const catchMeIfYouCan = 'http://localhost:3001';
 
 let currentStats = {
-  before: '',
-  after: '',
+  start: 0,
+  before: 0,
+  after: 0,
   coinsMoved: 0,
+  coinDistanceFromStart: 0,
   timeTotal: 0,
   timePretty: 0,
   periodStart: Date.now(),
@@ -100,6 +102,9 @@ const captainsLog = () => {
   if (currentStats.coinsMoved) {
     console.log(`...z-coins spotted: ${currentStats.coinsMoved}...`);
   }
+  if (currentStats.coinDistanceFromStart) {
+    console.log(`...distance from where we started: ${currentStats.coinDistanceFromStart}...`)
+  }
   if (currentStats.lastMovement) {
     console.log(`...last glimpse of activity: ${currentStats.lastMovement}...`);
   }
@@ -108,25 +113,28 @@ const captainsLog = () => {
 
 const checkHours = (timePassed) => {
   currentStats.timeTotal = timePassed;
-  currentStats.timePretty = (timePassed/1000/3600).toFixed(4);
+  currentStats.timePretty = (currentStats.timeTotal/1000/3600).toFixed(4);
 }
 
 function isDifferent() {
   process.stdout.write('\033c');
   console.log(`...peeping...`);
   checkExplorer((dexBody) => {
+    currentStats.before = currentStats.after;
     currentStats.after = dexBody;
-    if (Math.abs(currentStats.before - currentStats.after) < 10) {
+    currentStats.coinDistanceFromStart = Math.abs(currentStats.start - currentStats.after);
+    currentStats.coinsMoved = currentStats.coinsMoved + Math.abs(currentStats.after - currentStats.before);
+    if (currentStats.coinDistanceFromStart < 10 && Math.abs(currentStats.after - currentStats.before) === 0) {
       checkHours(Date.now() - currentStats.periodStart);
       captainsLog();
       return;
-    } else if (Math.abs(currentStats.before - currentStats.after) > 10 && currentStats.coinsMoved < 200) {
-      currentStats.coinsMoved = Math.abs(currentStats.before - currentStats.after);
+    } else if (currentStats.coinDistanceFromStart < 200 && currentStats.coinsMoved > 0) {
       currentStats.lastMovement = new Date();
       checkHours(Date.now() - currentStats.periodStart);
       captainsLog();
       return;
-    } else if (Math.abs(currentStats.before - currentStats.after) > 10 && currentStats.coinsMoved >= 200) {
+    } else if (currentStats.coinDistanceFromStart > 200) {
+      checkHours(Date.now() = currentStats.periodStart);
       snap();
       return;
     }
@@ -137,7 +145,7 @@ const stakeout = () => {
   process.stdout.write('\033c');
   console.log(`...turning off the engine...`);
   checkExplorer((dexBody) => {
-    currentStats.before = dexBody;
+    currentStats.start = dexBody;
     captainsLog();
     setInterval(isDifferent, 300000);
   });
